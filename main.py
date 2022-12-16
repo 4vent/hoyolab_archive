@@ -23,7 +23,7 @@ def parse_class(text: str):
     return text.split(" ")
 
 
-def parse_span(attrs: list[tuple[str, str | None]]):
+def parse_span(attrs):
     if len(attrs) == 0:
         return None
     elif len(attrs) == 1:
@@ -42,7 +42,7 @@ def parse_span(attrs: list[tuple[str, str | None]]):
         raise RuntimeError(attrs)
 
 
-def parse_div(attrs: list[tuple[str, str | None]]):
+def parse_div(attrs):
     if len(attrs) == 1:
         if attrs[0][0] == "class":
             if attrs[0][1] is None:
@@ -59,7 +59,7 @@ def parse_div(attrs: list[tuple[str, str | None]]):
         raise RuntimeError(attrs)
 
 
-def parse_img(attrs: list[tuple[str, str | None]]) -> str:
+def parse_img(attrs) -> str:
     if len(attrs) == 1:
         if attrs[0][0] == "src":
             if attrs[0][1] is None:
@@ -71,7 +71,7 @@ def parse_img(attrs: list[tuple[str, str | None]]) -> str:
         raise RuntimeError(attrs)
 
 
-def parse_link(attrs: list[tuple[str, str | None]]) -> str:
+def parse_link(attrs) -> str:
     dict_attrs = dict(attrs)
     if len(dict_attrs) <= 2:
         if dict_attrs["href"] is None:
@@ -81,7 +81,7 @@ def parse_link(attrs: list[tuple[str, str | None]]) -> str:
         raise RuntimeError(attrs)
 
 
-def parse_have_style(attrs: list[tuple[str, str | None]]):
+def parse_have_style(attrs):
     _dict = dict(attrs)
     if len(_dict) == 0:
         return None
@@ -138,12 +138,13 @@ class MyHTMLParser(HTMLParser):
                 if not os.path.exists(self.dst + 'attachments'):
                     os.mkdir(self.dst + 'attachments')
                 path = self.dst + 'attachments/' + filename
+                rel_path = 'attachments/' + filename
                 if not os.path.exists(path):
-                    with (s.get(img, stream=True) as res,
-                          open(path, "wb") as f):
+                    res = s.get(img, stream=True)
+                    with open(path, "wb") as f:
                         for chunk in res.iter_content(1024 * 512):
                             f.write(chunk)
-                self.md_text += f"![{img}]({img})"
+                self.md_text += f"![{rel_path}]({rel_path})"
             else:
                 raise RuntimeError(type(img), img)
         elif tag == "h1":
@@ -190,7 +191,6 @@ class MyHTMLParser(HTMLParser):
             self.md_text += f"</{tag}>"
             
         if len(self.skip_stack) == 0:
-            print(self.tmp_inner_contents)
             if not self.tmp_inner_contents == ["p", "br"]:
                 self.md_text += "\n\n"
             self.tmp_inner_contents.clear()
@@ -217,5 +217,5 @@ with requests.Session() as s:
                 params={"post_id": post_id, "read": "1"})
     data = res.json()["data"]
     parser.feed(data["post"]["post"]["content"])
-    with open(f"{post_id}/test2.md", "w") as f:
+    with open(f"{post_id}/test2.md", "w", encoding='utf-8') as f:
         f.write(parser.md_text)
