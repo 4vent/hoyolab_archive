@@ -1,10 +1,8 @@
-import base64
 from datetime import datetime
 import json
 import os
 import shutil
 from typing import Dict, Iterator, Union, List, Tuple
-import uuid
 import warnings
 from html.parser import HTMLParser
 import re

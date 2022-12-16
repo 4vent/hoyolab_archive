@@ -3,4 +3,4 @@ pg.*
 error_*.html
 .env
 log/*
-.imgurmanager/
+.imgurmanager/*
