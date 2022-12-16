@@ -1,87 +1,14 @@
 import os
-from typing import Union, List, Tuple
+from typing import Dict, Union, List, Tuple
+import warnings
 import requests
 from html.parser import HTMLParser
 import re
 
-
-# def parse_class(text: str):
-#     return text.split(" ")
+from tqdm import tqdm
 
 
-# def parse_span(attrs: List[Tuple[str, Union[str, None]]]):
-#     if len(attrs) == 0:
-#         return None
-#     elif len(attrs) == 1:
-#         if attrs[0][0] == "style":
-#             if attrs[0][1] is None:
-#                 raise RuntimeError(attrs)
-#             else:
-#                 style = parse_style(attrs[0][1])
-#                 if style["color"] == "black":
-#                     return None
-#                 else:
-#                     return {"color": style["color"]}
-#         else:
-#             raise RuntimeError(attrs)
-#     else:
-#         raise RuntimeError(attrs)
-
-
-# def parse_div(attrs: List[Tuple[str, Union[str, None]]]):
-#     if len(attrs) == 1:
-#         if attrs[0][0] == "class":
-#             if attrs[0][1] is None:
-#                 raise RuntimeError(attrs)
-#             _class = parse_class(attrs[0][1])
-#             if len(_class) == 1:
-#                 if _class[0] in ["ql-image", "ql-image-wrp", "ql-divider"]:
-#                     return None
-#                 else:
-#                     raise RuntimeError(_class[0])
-#             else:
-#                 raise RuntimeError(_class)
-#     else:
-#         raise RuntimeError(attrs)
-
-
-# def parse_img(attrs: List[Tuple[str, Union[str, None]]]) -> str:
-#     if len(attrs) == 1:
-#         if attrs[0][0] == "src":
-#             if attrs[0][1] is None:
-#                 raise RuntimeError(attrs)
-#             return attrs[0][1]
-#         else:
-#             raise RuntimeError(attrs[0])
-#     else:
-#         raise RuntimeError(attrs)
-
-
-# def parse_link(attrs: List[Tuple[str, Union[str, None]]]) -> str:
-#     dict_attrs = dict(attrs)
-#     if len(dict_attrs) <= 2:
-#         if dict_attrs["href"] is None:
-#             raise RuntimeError(attrs)
-#         return dict_attrs["href"]
-#     else:
-#         raise RuntimeError(attrs)
-
-
-# def parse_have_style(attrs: List[Tuple[str, Union[str, None]]]):
-#     _dict = dict(attrs)
-#     if len(_dict) == 0:
-#         return None
-#     elif len(_dict) == 1:
-#         if _dict["style"] is None:
-#             raise RuntimeError(attrs)
-#         else:
-#             style = parse_style(_dict["style"])
-#             if style["color"] == "black":
-#                 return None
-#             else:
-#                 return {"color": style["color"]}
-#     else:
-#         raise RuntimeError(attrs)
+ARTICLE_FILE_NAME = "article"
 
 
 class Subscriptable():
@@ -120,7 +47,8 @@ class Attributes():
         self.src: Union[str, None] = None
         self.alt: Union[str, None] = None
 
-def parse_attributes(attrs: List[Tuple[str, Union[str, None]]], 
+
+def parse_attributes(attrs: List[Tuple[str, Union[str, None]]],
                      allow_attributes: Union[List[str], None] = None):
     returns = Attributes()
     if allow_attributes is None:
@@ -151,13 +79,13 @@ class MyHTMLParser(HTMLParser):
                  *, convert_charrefs: bool = ...) -> None:
         super().__init__(convert_charrefs=convert_charrefs)
         self.md_text = ""
-        self.skip_stack = []
-        self.block_stack = []
-        self.tmp_links = []
-        self.tmp_inner_contents = []
+        self.skip_stack: List[bool] = []
+        self.tmp_links: List[str] = []
+        self.tmp_inner_contents: List[str] = []
         
-        self.links = []
-        self.linked_post_ids = []
+        self.links: List[str] = []
+        self.linked_post_ids: List[str] = []
+        self.images: Dict[str, str] = {}
 
         self.dst = dst
         self.session = session
@@ -194,15 +122,10 @@ class MyHTMLParser(HTMLParser):
         img = parse_attributes(attrs, ["src", "alt"])
         if isinstance(img.src, str):
             filename = img.src.split("/")[-1]
-            if not os.path.exists(self.dst + 'attachments'):
-                os.mkdir(self.dst + 'attachments')
-            path = self.dst + 'attachments/' + filename
             rel_path = 'attachments/' + filename
-            if not os.path.exists(path):
-                res = self.session.get(img.src, stream=True)
-                with open(path, "wb") as f:
-                    for chunk in res.iter_content(1024 * 512):
-                        f.write(chunk)
+
+            self.images[filename] = img.src
+            
             self.md_text += f"![{img.alt if img.alt else img.src}]({rel_path})"
         else:
             raise RuntimeError(type(img.src), img.src)
@@ -226,7 +149,19 @@ class MyHTMLParser(HTMLParser):
     
     def anchor_begin(self, attrs) -> bool:
         anchor = parse_attributes(attrs, ["href", "style"])
-        self.tmp_links.append(anchor.href)
+        if anchor.href is None:
+            raise ValueError('There are no "href"! Check html.')
+        if anchor.href.startswith("https://www.hoyolab.com/article/"):
+            match = re.search(r'(?<=article\/)[0-9]+', anchor.href)
+            if not match:
+                raise ValueError('Invaild hoyolab post url!')
+            link = '../' + match.group() + '/' + ARTICLE_FILE_NAME
+
+            self.linked_post_ids.append(match.group())
+        else:
+            warnings.warn("hoyolabの投稿以外のリンクが発見されました。 > " + anchor.href)
+            link = anchor.href
+        self.tmp_links.append(link)
         self.md_text += "["
         return False
 
@@ -277,24 +212,46 @@ class MyHTMLParser(HTMLParser):
         elif not isSkip:
             self.md_text += f"</{tag}>"
         
-        skip_stack = self.skip_stack
         if len(self.skip_stack) == 0:
             if not self.tmp_inner_contents == ["p", "br"]:
                 self.md_text += "\n\n"
             self.tmp_inner_contents.clear()
 
     def handle_data(self, data):
-        if "\t" in data:
-            print("")
-        data = data.replace("\xa0", "    ")
+        data = data.replace("\xa0", " ")
         self.md_text += data
     
     def get_linked_post_ids(self):
         linked_post_ids = []
         for link in self.links:
             if link.startswith('https://www.hoyolab.com/article/'):
-                linked_post_ids.append(re.search(r'(?<=article\/)[0-9]+', link).group())
+                match = re.search(r'(?<=article\/)[0-9]+', link)
+                if match is None:
+                    raise ValueError("invaild hoyolab article url!")
+                linked_post_ids.append(match.group())
         return linked_post_ids
+
+
+def download_images(session: requests.Session, dst: str,
+                    filename_stc: Dict[str, str], with_tqdm=True):
+    if not dst.endswith('/'):
+        dst += '/'
+    
+    if with_tqdm:
+        tq = tqdm(filename_stc.items())
+    else:
+        tq = filename_stc.items()
+
+    for filename, src in tq:
+        if not os.path.exists(dst + 'attachments'):
+            os.mkdir(dst + 'attachments')
+        path = dst + 'attachments/' + filename
+
+        if not os.path.exists(path):
+            res = session.get(src, stream=True)
+            with open(path, "wb") as f:
+                for chunk in res.iter_content(1024 * 512):
+                    f.write(chunk)
 
 
 def save_hoyolab_post(post_id: str):
@@ -302,6 +259,7 @@ def save_hoyolab_post(post_id: str):
         if not os.path.exists(post_id):
             os.mkdir(post_id)
 
+        DST = "posts/" + post_id + "/"
         parser = MyHTMLParser(post_id + "/", s)
 
         s.headers = {"User-Agent": ""}  # type: ignore
@@ -311,10 +269,13 @@ def save_hoyolab_post(post_id: str):
         # with open("test.html", "wb") as f:
         #     f.write(res.content)
         parser.feed(data["post"]["post"]["content"])
-        with open(f"{post_id}/article.md", "w", encoding='utf-8') as f:
+        download_images(s, DST, parser.images, with_tqdm=True)
+        
+        with open(DST + f"{ARTICLE_FILE_NAME}.md", "w", encoding='utf-8') as f:
             f.write(parser.md_text)
         
-        print(parser.get_linked_post_ids())
+        print(parser.linked_post_ids)
+
 
 for id in ['13783075', '14091045', '14216127', '7955164', '13809367', '14155947', '14156515', '12312126', '12304317', '14156063', '14156290', '8471110', '8483830', '14214242', '9989311', '9423533', '14183709', '14184074', '14184039', '14183919', '14184353', '14184589', '14184841']:
     save_hoyolab_post(id)
