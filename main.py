@@ -2,6 +2,7 @@ import base64
 from datetime import datetime
 import json
 import os
+import shutil
 from typing import Dict, Iterator, Union, List, Tuple
 import uuid
 import warnings
@@ -296,7 +297,7 @@ class ImgurImageManager():
                       with_tqdm=True) -> Iterator[Tuple[str, str]]:
         
         if with_tqdm:
-            tq = tqdm(filename_src.items())
+            tq = tqdm(filename_src.items(), leave=False)
         else:
             tq = filename_src.items()
 
@@ -325,10 +326,10 @@ class ImgurImageManager():
             if not status // 100 == 2:
                 raise RuntimeError()
         except (KeyError, RuntimeError):
-            log_path = 'error_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
+            log_path = 'log/error_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
             with open(log_path, 'wb') as f:
                 f.write(res.content)
-            log_path2 = 'res_header_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
+            log_path2 = 'log/res_header_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
             with open(log_path2, 'w') as f:
                 json.dump(dict(res.headers), f, indent=4, ensure_ascii=False)
             raise RuntimeError(f"upload error. see {log_path} and {log_path2}")
@@ -374,6 +375,11 @@ def save_hoyolab_post(post_id: str):
         print(parser.linked_post_ids)
 
 
-# for id in ['13783075', '14091045', '14216127', '7955164', '13809367', '14155947', '14156515', '12312126', '12304317', '14156063', '14156290', '8471110', '8483830', '14214242', '9989311', '9423533', '14183709', '14184074', '14184039', '14183919', '14184353', '14184589', '14184841']:
-for id in ['14184074']:
-    save_hoyolab_post(id)
+article_list = os.listdir('posts')
+for id in ['13783075', '14091045', '14216127', '7955164', '13809367', '14155947', '14156515', '12312126', '12304317', '14156063', '14156290', '8471110', '8483830', '14214242', '9989311', '9423533', '14183709', '14184074', '14184039', '14183919', '14184353', '14184589', '14184841']:
+    if id not in article_list:
+        try:
+            save_hoyolab_post(id)
+        except:  # noqa: E722
+            if os.path.exists('posts/' + id):
+                shutil.rmtree('posts/' + id)
