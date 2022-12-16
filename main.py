@@ -1,14 +1,24 @@
+import base64
+from datetime import datetime
+import json
 import os
-from typing import Dict, Union, List, Tuple
+from typing import Dict, Iterator, Union, List, Tuple
+import uuid
 import warnings
-import requests
 from html.parser import HTMLParser
 import re
 
+import requests
 from tqdm import tqdm
+import dotenv
+
+dotenv.load_dotenv()
 
 
 ARTICLE_FILE_NAME = "article"
+IMGUR_CID = os.getenv('IMGUR_CLIENT_ID')
+if IMGUR_CID is None:
+    raise ValueError('')
 
 
 class Subscriptable():
@@ -262,26 +272,78 @@ class MyHTMLParser(HTMLParser):
         return linked_post_ids
 
 
-def download_images(session: requests.Session, dst: str,
-                    filename_stc: Dict[str, str], with_tqdm=True):
-    if not dst.endswith('/'):
-        dst += '/'
+class ImgurImageManager():
+    def __init__(self, client_id: str, client_secret: Union[str, None] = None,
+                 savedata_path='.imgurmanager/savedata.json') -> None:
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.savedata_path = savedata_path
+
+        self.load_uploaded_image()
+
+    def load_uploaded_image(self):
+        if not os.path.exists(os.path.dirname(self.savedata_path)):
+            os.makedirs(os.path.dirname(self.savedata_path))
+        if os.path.exists(self.savedata_path):
+            with open(self.savedata_path) as f:
+                self.library = json.load(f)['library']
+        else:
+            with open(self.savedata_path, 'w') as f:
+                f.write('{\n    "library": {}\n}')
+                self.library = {}
     
-    if with_tqdm:
-        tq = tqdm(filename_stc.items())
-    else:
-        tq = filename_stc.items()
+    def repost_images(self, filename_src: Dict[str, str],
+                      with_tqdm=True) -> Iterator[Tuple[str, str]]:
+        
+        if with_tqdm:
+            tq = tqdm(filename_src.items())
+        else:
+            tq = filename_src.items()
 
-    for filename, src in tq:
-        if not os.path.exists(dst + 'attachments'):
-            os.mkdir(dst + 'attachments')
-        path = dst + 'attachments/' + filename
+        for filename, src_link in tq:
+            if src_link in self.library:
+                yield ('attachments/' + filename, self.library[src_link]['link'])
+            else:
+                # local_img_path = str(uuid.uuid4()) + '.imagedownloading'
+                # res = session.get(src_link, stream=True)
+                # with open(local_img_path, "wb") as f:
+                #     for chunk in res.iter_content(1024 * 512):
+                #         f.write(chunk)
+                link = self.upload_url(src_link, src_link)
+                yield ('attachments/' + filename, link)
+                # os.remove(local_img_path)
+    
+    def upload_url(self, libkey, src_link) -> str:
+        res = requests.post(
+            'https://api.imgur.com/3/upload',
+            data={'image': src_link, 'type': 'url'},
+            headers={'Authorization': 'Client-ID ' + self.client_id}
+        )
+        decode_res = res.json()
+        try:
+            status = decode_res['status']
+            if not status // 100 == 2:
+                raise RuntimeError()
+        except (KeyError, RuntimeError):
+            log_path = 'error_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
+            with open(log_path, 'wb') as f:
+                f.write(res.content)
+            log_path2 = 'res_header_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
+            with open(log_path2, 'w') as f:
+                json.dump(dict(res.headers), f, indent=4, ensure_ascii=False)
+            raise RuntimeError(f"upload error. see {log_path} and {log_path2}")
+        
+        data = decode_res['data']
+        self.library[libkey] = {}
+        self.library[libkey]['id'] = data['id']
+        self.library[libkey]['deletehash'] = data['deletehash']
+        self.library[libkey]['link'] = data['link']
+        self.library[libkey]['datetime'] = data['datetime']
 
-        if not os.path.exists(path):
-            res = session.get(src, stream=True)
-            with open(path, "wb") as f:
-                for chunk in res.iter_content(1024 * 512):
-                    f.write(chunk)
+        with open(self.savedata_path, 'w') as f:
+            json.dump({'library': self.library}, f, indent=4, ensure_ascii=False)
+
+        return data['link']
 
 
 def save_hoyolab_post(post_id: str):
@@ -294,7 +356,7 @@ def save_hoyolab_post(post_id: str):
         data = res.json()["data"]
         try:
             parser.feed(data["post"]["post"]["content"])
-        except:
+        except:  # noqa: E722
             with open(f"error_{post_id}.html", "w") as f:
                 f.write(data["post"]["post"]["content"])
             raise
@@ -302,7 +364,9 @@ def save_hoyolab_post(post_id: str):
         DST = "posts/" + post_id + "/"
         if not os.path.exists(DST):
             os.mkdir(DST)
-        download_images(s, DST, parser.images, with_tqdm=True)
+        manager = ImgurImageManager(IMGUR_CID)
+        for filename, link in manager.repost_images(parser.images, with_tqdm=True):
+            parser.md_text = parser.md_text.replace(filename, link)
         
         with open(DST + f"{ARTICLE_FILE_NAME}.md", "w", encoding='utf-8') as f:
             f.write(parser.md_text)
@@ -310,5 +374,6 @@ def save_hoyolab_post(post_id: str):
         print(parser.linked_post_ids)
 
 
-for id in ['13783075', '14091045', '14216127', '7955164', '13809367', '14155947', '14156515', '12312126', '12304317', '14156063', '14156290', '8471110', '8483830', '14214242', '9989311', '9423533', '14183709', '14184074', '14184039', '14183919', '14184353', '14184589', '14184841']:
+# for id in ['13783075', '14091045', '14216127', '7955164', '13809367', '14155947', '14156515', '12312126', '12304317', '14156063', '14156290', '8471110', '8483830', '14214242', '9989311', '9423533', '14183709', '14184074', '14184039', '14183919', '14184353', '14184589', '14184841']:
+for id in ['14184074']:
     save_hoyolab_post(id)

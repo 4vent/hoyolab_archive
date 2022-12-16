@@ -1,3 +1,4 @@
 test.*
 pg.*
 error_*.html
+.env

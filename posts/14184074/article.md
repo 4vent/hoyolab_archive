@@ -4,13 +4,13 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 ここではVer.3.3前半のガチャの攻略をまとめさせていただきました。ぜひご参考にしてください:
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/b0d7ff887705d9e060664145c2797f3d_1442533800109754433.png](attachments/b0d7ff887705d9e060664145c2797f3d_1442533800109754433.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/b0d7ff887705d9e060664145c2797f3d_1442533800109754433.png](https://i.imgur.com/vFPJCWf.jpeg)
 
 
 
  
 
-![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](attachments/line_3.png)
+![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](https://i.imgur.com/t5LkFFh.png)
 
 
 
@@ -20,7 +20,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 　星5岩元素両手剣キャラクター・荒瀧一斗は元素反応を起さないにもかかわらず高火力を持つアタッカーです。無凸の荒瀧一斗は強力無比で、専用武器と合わせて使うならキャラランキングT1にも入れます。アタッカーを欠けているプレイヤーにおすすめです。
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/a1e15cc426cee40fad9041b6366bfe97_9052374612559652330.jpg](attachments/a1e15cc426cee40fad9041b6366bfe97_9052374612559652330.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/a1e15cc426cee40fad9041b6366bfe97_9052374612559652330.jpg](https://i.imgur.com/Kh6c9C9.jpeg)
 
 	 
 
@@ -32,7 +32,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --育成素材入手ルート攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/3ba8e327f5b081270854cecd98f02ce5_1368767857048586815.png](attachments/3ba8e327f5b081270854cecd98f02ce5_1368767857048586815.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/3ba8e327f5b081270854cecd98f02ce5_1368767857048586815.png](https://i.imgur.com/6ra6DwJ.jpeg)
 
 
 
@@ -46,7 +46,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --荒瀧一斗キャラデザイン
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/a6de51236679b845977edeb8537ef35c_3482869551083555720.jpg](attachments/a6de51236679b845977edeb8537ef35c_3482869551083555720.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/a6de51236679b845977edeb8537ef35c_3482869551083555720.jpg](https://i.imgur.com/qEGMrTP.jpeg)
 
 
 
@@ -56,7 +56,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 
 
-![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](attachments/line_3.png)
+![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](https://i.imgur.com/t5LkFFh.png)
 
 
 
@@ -76,13 +76,13 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --【図一枚で分かる】♯キャラ攻略♯放浪者（性能解説/ビルド選択/パーティ編成）
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/8409e06e5496284f15a8efa9b723065b_1753344952852022168.jpg](attachments/8409e06e5496284f15a8efa9b723065b_1753344952852022168.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/8409e06e5496284f15a8efa9b723065b_1753344952852022168.jpg](https://i.imgur.com/VDfEDwU.jpeg)
 
 
 
 --ガチャ&育成攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/08/248396208/8fa0e6bd51e6f8035823cdd42e8a251f_5228800012837366863.png](attachments/8fa0e6bd51e6f8035823cdd42e8a251f_5228800012837366863.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/08/248396208/8fa0e6bd51e6f8035823cdd42e8a251f_5228800012837366863.png](https://i.imgur.com/sk7k6Zh.jpeg)
 
 
 
@@ -94,7 +94,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --育成素材入手ルート攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/f4b2f6802b317214ba3501ace1460e49_6130987638904165488.jpg](attachments/f4b2f6802b317214ba3501ace1460e49_6130987638904165488.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/f4b2f6802b317214ba3501ace1460e49_6130987638904165488.jpg](https://i.imgur.com/QCvekUr.jpeg)
 
 
 
@@ -108,7 +108,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --魔物素材入手ルート攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/20190ae43c3f31e7f48c606950ca59b4_3364798676183254669.png](attachments/20190ae43c3f31e7f48c606950ca59b4_3364798676183254669.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/20190ae43c3f31e7f48c606950ca59b4_3364798676183254669.png](https://i.imgur.com/tTNzGAw.jpeg)
 
 
 
@@ -124,7 +124,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 
 
-![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](attachments/line_3.png)
+![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](https://i.imgur.com/t5LkFFh.png)
 
 
 
@@ -134,7 +134,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 星4炎元素法器キャラクター<span style="color: rgb(239, 34, 12)">煙緋</span>。育成しやすく、挙動が素直で扱いやすいので、初心者におすすめです。しかし、競合キャラはすでに数多く存在していて、それに炎元素アタッカーを育成したプレイヤーもたくさんいるので、育成上限が低い「煙緋」は大きく劣り、あまり期待できません。今回の複刻ガチャで煙緋が必要とする方々はぜひ引いてみましょう。
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/38dc0c26c62225bf8e5e2f745f29bd19_884408437467946018.jpg](attachments/38dc0c26c62225bf8e5e2f745f29bd19_884408437467946018.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/38dc0c26c62225bf8e5e2f745f29bd19_884408437467946018.jpg](https://i.imgur.com/oOdylM8.jpeg)
 
 
 
@@ -146,7 +146,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --ガチャ&育成攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/289241c3846bba0a08f8bca76c404dca_1065630457585987678.png](attachments/289241c3846bba0a08f8bca76c404dca_1065630457585987678.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/289241c3846bba0a08f8bca76c404dca_1065630457585987678.png](https://i.imgur.com/BdRMIht.jpeg)
 
 
 
@@ -158,7 +158,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --キャラの超詳細分析
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/772cf454cee466f61e221d3e621afe21_5092089298825380060.png](attachments/772cf454cee466f61e221d3e621afe21_5092089298825380060.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/772cf454cee466f61e221d3e621afe21_5092089298825380060.png](https://i.imgur.com/rHdF0Mo.jpeg)
 
 
 
@@ -170,7 +170,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --育成素材入手ルート攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/f2fc5e85e5c8a9b56a3a78b3a01b31ad_1191267577746323915.png](attachments/f2fc5e85e5c8a9b56a3a78b3a01b31ad_1191267577746323915.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/f2fc5e85e5c8a9b56a3a78b3a01b31ad_1191267577746323915.png](https://i.imgur.com/oWK1Mjg.png)
 
  
 
@@ -182,7 +182,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --魔物素材入手ルート攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/259cbe0acb30b7592d58d41ff2418f50_444425013928545234.jpg](attachments/259cbe0acb30b7592d58d41ff2418f50_444425013928545234.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/259cbe0acb30b7592d58d41ff2418f50_444425013928545234.jpg](https://i.imgur.com/s3r7Ac5.jpeg)
 
 
 
@@ -190,7 +190,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 
 
-![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](attachments/line_3.png)
+![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](https://i.imgur.com/t5LkFFh.png)
 
 
 
@@ -204,7 +204,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 ゴローの耳を触って幸運をもらえるという噂もありますよ！
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/515b14f59e08926dd538a9e001ab77d3_1511082192872601600.jpg](attachments/515b14f59e08926dd538a9e001ab77d3_1511082192872601600.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/515b14f59e08926dd538a9e001ab77d3_1511082192872601600.jpg](https://i.imgur.com/ggTSuCb.jpeg)
 
 
 
@@ -216,7 +216,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --ガチャ&育成攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/adffceee38a4d839a6712fc405c168ac_3659044167569700501.png](attachments/adffceee38a4d839a6712fc405c168ac_3659044167569700501.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/adffceee38a4d839a6712fc405c168ac_3659044167569700501.png](https://i.imgur.com/wtMfkXC.jpeg)
 
  
 
@@ -230,7 +230,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --キャラの超詳細分析
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/a4ad262d174cf83b64141744bb838671_2524414066685656651.png](attachments/a4ad262d174cf83b64141744bb838671_2524414066685656651.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/a4ad262d174cf83b64141744bb838671_2524414066685656651.png](https://i.imgur.com/K0TcTYo.jpeg)
 
  
 
@@ -242,7 +242,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --育成素材入手ルート攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/8cd3757f627e81ebf8c558f56edc71d9_4021675429458244248.jpg](attachments/8cd3757f627e81ebf8c558f56edc71d9_4021675429458244248.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/8cd3757f627e81ebf8c558f56edc71d9_4021675429458244248.jpg](https://i.imgur.com/si6Wnhd.jpeg)
 
  
 
@@ -254,7 +254,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --魔物素材入手ルート攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/4b01f99f790c78a3bf3dff448ffbedda_2507522681941141794.jpg](attachments/4b01f99f790c78a3bf3dff448ffbedda_2507522681941141794.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/4b01f99f790c78a3bf3dff448ffbedda_2507522681941141794.jpg](https://i.imgur.com/Qmq228E.jpeg)
 
 
 
@@ -264,7 +264,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 
 
-![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](attachments/line_3.png)
+![https://img-os-static.hoyolab.com/divider_config/PC/line_3.png](https://i.imgur.com/t5LkFFh.png)
 
 
 
@@ -282,7 +282,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --【図一枚で分かる】♯キャラ攻略♯ファルザン（性能解説/ビルド選択/パーティ編成）
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/4a9ec59d8b3c5497c80f88cf275f2a94_7817276658212107505.jpg](attachments/4a9ec59d8b3c5497c80f88cf275f2a94_7817276658212107505.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/4a9ec59d8b3c5497c80f88cf275f2a94_7817276658212107505.jpg](https://i.imgur.com/Zx2Usxs.jpeg)
 
 
 
@@ -290,7 +290,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --ガチャ&育成攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/4c923071b574fda31a73d0ba193b9270_1981815675240401446.png](attachments/4c923071b574fda31a73d0ba193b9270_1981815675240401446.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/4c923071b574fda31a73d0ba193b9270_1981815675240401446.png](https://i.imgur.com/p0JllWH.jpeg)
 
 [**【Ver.3.3攻略】ファルザンキャラガチャと育成おすすめ**](../14214242/article)
 
@@ -304,7 +304,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --育成素材入手ルート攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/8dffa76810763cce4c9e221adfe08a2f_8523970684217609734.png](attachments/8dffa76810763cce4c9e221adfe08a2f_8523970684217609734.png)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/8dffa76810763cce4c9e221adfe08a2f_8523970684217609734.png](https://i.imgur.com/YoQBKE2.jpeg)
 
 
 
@@ -316,7 +316,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 --魔物素材入手ルート攻略
 
-![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/2183ad701b913d9f8023df9b39809acd_1599936399349349799.jpg](attachments/2183ad701b913d9f8023df9b39809acd_1599936399349349799.jpg)
+![https://upload-os-bbs.hoyolab.com/upload/2022/12/07/248396208/2183ad701b913d9f8023df9b39809acd_1599936399349349799.jpg](https://i.imgur.com/mMr3y9i.jpeg)
 
 
 
@@ -326,7 +326,7 @@ Ver.3.3前半の新規ガチャがまもなく開催されますよ。今回は�
 
 
 
-![https://img-os-static.hoyolab.com/divider_config/PC/line_2.png](attachments/line_2.png)
+![https://img-os-static.hoyolab.com/divider_config/PC/line_2.png](https://i.imgur.com/UpZmM2S.png)
 
 Version: [zh-tw](../14183709/article)/[ja-jp](../14184074/article)/[en-us](../14184039/article)/[es-es](../14183919/article)/[ru-ru](../14184353/article)[it-it](../14184589/article)/[tr-tr](../14184841/article)
 
