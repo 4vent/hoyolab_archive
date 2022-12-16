@@ -2,6 +2,7 @@ import os
 from typing import Union, List, Tuple
 import requests
 from html.parser import HTMLParser
+import re
 
 
 # def parse_class(text: str):
@@ -117,12 +118,13 @@ class Attributes():
         self.href: Union[str, None] = None
         self.cls: Union[List[str], None] = None
         self.src: Union[str, None] = None
+        self.alt: Union[str, None] = None
 
 def parse_attributes(attrs: List[Tuple[str, Union[str, None]]], 
                      allow_attributes: Union[List[str], None] = None):
     returns = Attributes()
     if allow_attributes is None:
-        allow_attributes = ["style", "href", "class", "src"]
+        allow_attributes = ["style", "href", "class", "src", "alt"]
     
     for k, v in dict(attrs).items():
         if k not in allow_attributes:
@@ -139,6 +141,8 @@ def parse_attributes(attrs: List[Tuple[str, Union[str, None]]],
                 returns.cls = v.split(" ")
             elif k == "src":
                 returns.src = v
+            elif k == "alt":
+                returns.alt = v
     return returns
 
 
@@ -151,6 +155,9 @@ class MyHTMLParser(HTMLParser):
         self.block_stack = []
         self.tmp_links = []
         self.tmp_inner_contents = []
+        
+        self.links = []
+        self.linked_post_ids = []
 
         self.dst = dst
         self.session = session
@@ -178,16 +185,13 @@ class MyHTMLParser(HTMLParser):
         if div.cls is None:
             raise RuntimeError
         
-        if not len(div.cls) == 1:
-            raise RuntimeError(div.cls)
+        if all(c in ["ql-image", "ql-image-wrp", "ql-divider", "ql-align-center"] for c in div.cls):
+            return True
         else:
-            if div.cls[0] in ["ql-image", "ql-image-wrp", "ql-divider"]:
-                return True
-            else:
-                raise RuntimeError(div.cls[0])
+            raise RuntimeError(div.cls)
     
     def img_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> None:
-        img = parse_attributes(attrs, ["src"])
+        img = parse_attributes(attrs, ["src", "alt"])
         if isinstance(img.src, str):
             filename = img.src.split("/")[-1]
             if not os.path.exists(self.dst + 'attachments'):
@@ -199,9 +203,7 @@ class MyHTMLParser(HTMLParser):
                 with open(path, "wb") as f:
                     for chunk in res.iter_content(1024 * 512):
                         f.write(chunk)
-            if rel_path == "attachments/a1e15cc426cee40fad9041b6366bfe97_9052374612559652330.jpg":
-                print("", end="")
-            self.md_text += f"![{rel_path}]({rel_path})"
+            self.md_text += f"![{img.alt if img.alt else img.src}]({rel_path})"
         else:
             raise RuntimeError(type(img.src), img.src)
         
@@ -270,6 +272,7 @@ class MyHTMLParser(HTMLParser):
                 self.md_text += "</span>"
         elif tag == "a":
             link = self.tmp_links.pop()
+            self.links.append(link)
             self.md_text += f"]({link})"
         elif not isSkip:
             self.md_text += f"</{tag}>"
@@ -283,8 +286,15 @@ class MyHTMLParser(HTMLParser):
     def handle_data(self, data):
         if "\t" in data:
             print("")
-        data = data.replace("\t", "    ")
+        data = data.replace("\xa0", "    ")
         self.md_text += data
+    
+    def get_linked_post_ids(self):
+        linked_post_ids = []
+        for link in self.links:
+            if link.startswith('https://www.hoyolab.com/article/'):
+                linked_post_ids.append(re.search(r'(?<=article\/)[0-9]+', link).group())
+        return linked_post_ids
 
 
 def save_hoyolab_post(post_id: str):
@@ -292,17 +302,19 @@ def save_hoyolab_post(post_id: str):
         if not os.path.exists(post_id):
             os.mkdir(post_id)
 
-        parser = MyHTMLParser("14184074/", s)
+        parser = MyHTMLParser(post_id + "/", s)
 
         s.headers = {"User-Agent": ""}  # type: ignore
         res = s.get("https://bbs-api-os.hoyolab.com/community/post/wapi/getPostFull",
                     params={"post_id": post_id, "read": "1"})
         data = res.json()["data"]
-        with open("test.html", "wb") as f:
-            f.write(res.content)
+        # with open("test.html", "wb") as f:
+        #     f.write(res.content)
         parser.feed(data["post"]["post"]["content"])
         with open(f"{post_id}/article.md", "w", encoding='utf-8') as f:
             f.write(parser.md_text)
+        
+        print(parser.get_linked_post_ids())
 
-
-save_hoyolab_post("14184074")
+for id in ['13783075', '14091045', '14216127', '7955164', '13809367', '14155947', '14156515', '12312126', '12304317', '14156063', '14156290', '8471110', '8483830', '14214242', '9989311', '9423533', '14183709', '14184074', '14184039', '14183919', '14184353', '14184589', '14184841']:
+    save_hoyolab_post(id)
