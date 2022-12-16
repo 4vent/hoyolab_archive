@@ -323,6 +323,14 @@ class ImgurImageManager():
             status = decode_res['status']
             if not status // 100 == 2:
                 raise RuntimeError()
+            
+            log_path = 'log/error_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
+            with open(log_path, 'wb') as f:
+                f.write(res.content)
+            log_path2 = 'log/res_header_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
+            with open(log_path2, 'w') as f:
+                json.dump(dict(res.headers), f, indent=4, ensure_ascii=False)
+            
         except (KeyError, RuntimeError):
             log_path = 'log/error_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
             with open(log_path, 'wb') as f:
@@ -381,3 +389,4 @@ for id in ['13783075', '14091045', '14216127', '7955164', '13809367', '14155947'
         except:  # noqa: E722
             if os.path.exists('posts/' + id):
                 shutil.rmtree('posts/' + id)
+            raise
