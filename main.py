@@ -1,5 +1,5 @@
 import os
-from typing import Literal, Union
+from typing import Union, List, Tuple
 import requests
 from html.parser import HTMLParser
 
@@ -8,7 +8,7 @@ from html.parser import HTMLParser
 #     return text.split(" ")
 
 
-# def parse_span(attrs: list[tuple[str, Union[str, None]]]):
+# def parse_span(attrs: List[Tuple[str, Union[str, None]]]):
 #     if len(attrs) == 0:
 #         return None
 #     elif len(attrs) == 1:
@@ -27,7 +27,7 @@ from html.parser import HTMLParser
 #         raise RuntimeError(attrs)
 
 
-# def parse_div(attrs: list[tuple[str, Union[str, None]]]):
+# def parse_div(attrs: List[Tuple[str, Union[str, None]]]):
 #     if len(attrs) == 1:
 #         if attrs[0][0] == "class":
 #             if attrs[0][1] is None:
@@ -44,7 +44,7 @@ from html.parser import HTMLParser
 #         raise RuntimeError(attrs)
 
 
-# def parse_img(attrs: list[tuple[str, Union[str, None]]]) -> str:
+# def parse_img(attrs: List[Tuple[str, Union[str, None]]]) -> str:
 #     if len(attrs) == 1:
 #         if attrs[0][0] == "src":
 #             if attrs[0][1] is None:
@@ -56,7 +56,7 @@ from html.parser import HTMLParser
 #         raise RuntimeError(attrs)
 
 
-# def parse_link(attrs: list[tuple[str, Union[str, None]]]) -> str:
+# def parse_link(attrs: List[Tuple[str, Union[str, None]]]) -> str:
 #     dict_attrs = dict(attrs)
 #     if len(dict_attrs) <= 2:
 #         if dict_attrs["href"] is None:
@@ -66,7 +66,7 @@ from html.parser import HTMLParser
 #         raise RuntimeError(attrs)
 
 
-# def parse_have_style(attrs: list[tuple[str, Union[str, None]]]):
+# def parse_have_style(attrs: List[Tuple[str, Union[str, None]]]):
 #     _dict = dict(attrs)
 #     if len(_dict) == 0:
 #         return None
@@ -115,12 +115,11 @@ class Attributes():
     def __init__(self) -> None:
         self.style: Union[Style, None] = None
         self.href: Union[str, None] = None
-        self.cls: Union[list[str], None] = None
+        self.cls: Union[List[str], None] = None
         self.src: Union[str, None] = None
 
-
-def parse_attributes(attrs: list[tuple[str, Union[str, None]]],
-                     allow_attributes: Union[list[str], None] = None):
+def parse_attributes(attrs: List[Tuple[str, Union[str, None]]], 
+                     allow_attributes: Union[List[str], None] = None):
     returns = Attributes()
     if allow_attributes is None:
         allow_attributes = ["style", "href", "class", "src"]
@@ -159,7 +158,7 @@ class MyHTMLParser(HTMLParser):
         if not self.dst.endswith("/"):
             self.dst += "/"
     
-    def span_begin(self, attrs: list[tuple[str, Union[str, None]]]) -> Literal[True, False]:
+    def span_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> bool:
         isSkip = False
         span = parse_attributes(attrs, ['style'])
         if span.style is None or span.style["color"] == "black":
@@ -169,12 +168,12 @@ class MyHTMLParser(HTMLParser):
         
         return isSkip
     
-    def br_begin(self, attrs: list[tuple[str, Union[str, None]]]) -> None:
+    def br_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> None:
         parse_attributes(attrs, [])  # no attribute check.
         self.md_text += "\n\n"
         return None
 
-    def div_begin(self, attrs: list[tuple[str, Union[str, None]]]) -> Literal[True]:
+    def div_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> bool:
         div = parse_attributes(attrs, ["class"])
         if div.cls is None:
             raise RuntimeError
@@ -187,7 +186,7 @@ class MyHTMLParser(HTMLParser):
             else:
                 raise RuntimeError(div.cls[0])
     
-    def img_begin(self, attrs: list[tuple[str, Union[str, None]]]) -> None:
+    def img_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> None:
         img = parse_attributes(attrs, ["src"])
         if isinstance(img.src, str):
             filename = img.src.split("/")[-1]
@@ -208,12 +207,12 @@ class MyHTMLParser(HTMLParser):
         
         return None
     
-    def head_begin(self, attrs: list[tuple[str, Union[str, None]]], level: int) -> Literal[True]:
+    def head_begin(self, attrs: List[Tuple[str, Union[str, None]]], level: int) -> bool:
         parse_attributes(attrs, [])  # no attribute check.
         self.md_text += "#" * level + " "
         return True
     
-    def strong_begin(self, attrs: list[tuple[str, Union[str, None]]]) -> Literal[True, False]:
+    def strong_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> bool:
         strong = parse_attributes(attrs, ["style"])
         if strong.style is None or strong.style["color"] == "black":
             isSkip = True
@@ -223,7 +222,7 @@ class MyHTMLParser(HTMLParser):
         self.md_text += "**"
         return isSkip
     
-    def anchor_begin(self, attrs) -> Literal[False]:
+    def anchor_begin(self, attrs) -> bool:
         anchor = parse_attributes(attrs, ["href", "style"])
         self.tmp_links.append(anchor.href)
         self.md_text += "["
@@ -302,7 +301,7 @@ def save_hoyolab_post(post_id: str):
         with open("test.html", "wb") as f:
             f.write(res.content)
         parser.feed(data["post"]["post"]["content"])
-        with open(f"{post_id}/test2.md", "w", encoding='utf-8') as f:
+        with open(f"{post_id}/article.md", "w", encoding='utf-8') as f:
             f.write(parser.md_text)
 
 
