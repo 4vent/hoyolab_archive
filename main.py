@@ -75,7 +75,7 @@ def parse_attributes(attrs: List[Tuple[str, Union[str, None]]],
 
 
 class MyHTMLParser(HTMLParser):
-    def __init__(self, dst: str, session: requests.Session,
+    def __init__(self, session: requests.Session,
                  *, convert_charrefs: bool = ...) -> None:
         super().__init__(convert_charrefs=convert_charrefs)
         self.md_text = ""
@@ -87,11 +87,7 @@ class MyHTMLParser(HTMLParser):
         self.linked_post_ids: List[str] = []
         self.images: Dict[str, str] = {}
 
-        self.dst = dst
         self.session = session
-
-        if not self.dst.endswith("/"):
-            self.dst += "/"
     
     def span_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> bool:
         isSkip = False
@@ -113,13 +109,16 @@ class MyHTMLParser(HTMLParser):
         if div.cls is None:
             raise RuntimeError
         
-        if all(c in ["ql-image", "ql-image-wrp", "ql-divider", "ql-align-center"] for c in div.cls):
+        if all(c in ["ql-image", "ql-image-wrp", "ql-divider", "ql-align-center",
+                     "ql-image-desc-wrp", "ql-image-desc"] for c in div.cls):
             return True
         else:
             raise RuntimeError(div.cls)
     
     def img_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> None:
-        img = parse_attributes(attrs, ["src", "alt"])
+        img = parse_attributes(attrs, ["src", "alt", "class"])
+        if img.cls and not all((c in ["emoticon-image"]) for c in img.cls):
+            raise RuntimeError("unknown class in image: ", img.cls)
         if isinstance(img.src, str):
             filename = img.src.split("/")[-1]
             rel_path = 'attachments/' + filename
@@ -133,18 +132,39 @@ class MyHTMLParser(HTMLParser):
         return None
     
     def head_begin(self, attrs: List[Tuple[str, Union[str, None]]], level: int) -> bool:
-        parse_attributes(attrs, [])  # no attribute check.
+        parse_attributes(attrs, ["class"])  # no attribute check.
         self.md_text += "#" * level + " "
         return True
     
     def strong_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> bool:
+        strong = parse_attributes(attrs, ["style"])
+        if strong.style is None:
+            isSkip = True
+        elif strong.style["color"] in ["black", "rgb(0, 0, 0)"]:
+            isSkip = True
+        else:
+            self.md_text += f'<span style="color: {strong.style["color"]}">'
+            isSkip = False
+        self.md_text += "**"
+        return isSkip
+    
+    def italic_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> bool:
         strong = parse_attributes(attrs, ["style"])
         if strong.style is None or strong.style["color"] == "black":
             isSkip = True
         else:
             self.md_text += f'<span style="color: {strong.style["color"]}">'
             isSkip = False
-        self.md_text += "**"
+        self.md_text += "*"
+        return isSkip
+    
+    def underline_begin(self, attrs: List[Tuple[str, Union[str, None]]]) -> bool:
+        self.md_text += '<u'
+        for k, v in attrs:
+            self.md_text += f' {k}="{v}"'
+        self.md_text += '>'
+
+        isSkip = False
         return isSkip
     
     def anchor_begin(self, attrs) -> bool:
@@ -182,9 +202,15 @@ class MyHTMLParser(HTMLParser):
         elif tag in ["h1", "h2", "h3", "h4", "h5", "h6"]:
             self.head_begin(attrs, int(tag[1:2]))
             self.skip_stack.append(True)
-        elif tag == "strong":
+        elif tag in ["strong", "em"]:
             isSkip = self.strong_begin(attrs)
             self.skip_stack.append(isSkip)
+        elif tag == "i":
+            isSkip = self.italic_begin(attrs)
+            self.skip_stack.append(isSkip)
+        elif tag == "u":
+            self.underline_begin(attrs)
+            self.skip_stack.append(False)
         elif tag == "a":
             self.anchor_begin(attrs)
             self.skip_stack.append(False)
@@ -203,6 +229,10 @@ class MyHTMLParser(HTMLParser):
         
         if tag == "strong":
             self.md_text += "**"
+            if not isSkip:
+                self.md_text += "</span>"
+        elif tag == "i":
+            self.md_text += "*"
             if not isSkip:
                 self.md_text += "</span>"
         elif tag == "a":
@@ -256,19 +286,22 @@ def download_images(session: requests.Session, dst: str,
 
 def save_hoyolab_post(post_id: str):
     with requests.Session() as s:
-        if not os.path.exists(post_id):
-            os.mkdir(post_id)
-
-        DST = "posts/" + post_id + "/"
-        parser = MyHTMLParser(post_id + "/", s)
+        parser = MyHTMLParser(s)
 
         s.headers = {"User-Agent": ""}  # type: ignore
         res = s.get("https://bbs-api-os.hoyolab.com/community/post/wapi/getPostFull",
                     params={"post_id": post_id, "read": "1"})
         data = res.json()["data"]
-        # with open("test.html", "wb") as f:
-        #     f.write(res.content)
-        parser.feed(data["post"]["post"]["content"])
+        try:
+            parser.feed(data["post"]["post"]["content"])
+        except:
+            with open(f"error_{post_id}.html", "w") as f:
+                f.write(data["post"]["post"]["content"])
+            raise
+        
+        DST = "posts/" + post_id + "/"
+        if not os.path.exists(DST):
+            os.mkdir(DST)
         download_images(s, DST, parser.images, with_tqdm=True)
         
         with open(DST + f"{ARTICLE_FILE_NAME}.md", "w", encoding='utf-8') as f:
