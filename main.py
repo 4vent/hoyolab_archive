@@ -1,8 +1,11 @@
+import base64
 from datetime import datetime
 import json
 import os
 import shutil
+import time
 from typing import Dict, Iterator, Union, List, Tuple
+import uuid
 import warnings
 from html.parser import HTMLParser
 import re
@@ -42,8 +45,8 @@ class Style(Subscriptable):
         style = list(map(lambda x: x.strip(), text.split(";")))
         style = list(filter(lambda x: not x == '', style))
         
-        for s in style:
-            _s = list(map(lambda x: x.strip(), s.split(":")))
+        for session in style:
+            _s = list(map(lambda x: x.strip(), session.split(":")))
             tag, data = list(filter(lambda x: not x == '', _s))
             self.dict[tag] = data
 
@@ -273,10 +276,13 @@ class MyHTMLParser(HTMLParser):
 
 class ImgurImageManager():
     def __init__(self, client_id: str, client_secret: Union[str, None] = None,
-                 savedata_path='.imgurmanager/savedata.json') -> None:
+                 savedata_path='.imgurmanager/savedata.json',
+                 session: Union[requests.Session, None] = None) -> None:
         self.client_id = client_id
         self.client_secret = client_secret
         self.savedata_path = savedata_path
+        self.session = session
+        self.prev_request_time = 0
 
         self.load_uploaded_image()
 
@@ -303,33 +309,76 @@ class ImgurImageManager():
             if src_link in self.library:
                 yield ('attachments/' + filename, self.library[src_link]['link'])
             else:
-                # local_img_path = str(uuid.uuid4()) + '.imagedownloading'
-                # res = session.get(src_link, stream=True)
-                # with open(local_img_path, "wb") as f:
-                #     for chunk in res.iter_content(1024 * 512):
-                #         f.write(chunk)
-                link = self.upload_url(src_link, src_link)
-                yield ('attachments/' + filename, link)
-                # os.remove(local_img_path)
+                if self.session is None:
+                    raise ValueError('You must init ImgurImageManager with session')
+                local_img_path = str(uuid.uuid4()) + '.imagedownloading'
+                res = self.session.get(src_link, stream=True)
+                with open(local_img_path, "wb") as f:
+                    for chunk in res.iter_content(1024 * 512):
+                        f.write(chunk)
+                try:
+                    link = self.upload_file(src_link, local_img_path)
+                    yield ('attachments/' + filename, link)
+                except RuntimeError:
+                    raise
+                finally:
+                    os.remove(local_img_path)
+                
+                # link = self.upload_url(src_link, src_link)
+                # yield ('attachments/' + filename, link)
     
     def upload_url(self, libkey, src_link) -> str:
+        now = time.time()
+        if now - self.prev_request_time < 3:
+            time.sleep(3 - (now - self.prev_request_time))
+        self.prev_request_time = time.time()
+
         res = requests.post(
             'https://api.imgur.com/3/upload',
             data={'image': src_link, 'type': 'url'},
             headers={'Authorization': 'Client-ID ' + self.client_id}
         )
+
         decode_res = res.json()
         try:
             status = decode_res['status']
             if not status // 100 == 2:
                 raise RuntimeError()
             
+        except (KeyError, RuntimeError):
             log_path = 'log/error_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
             with open(log_path, 'wb') as f:
                 f.write(res.content)
             log_path2 = 'log/res_header_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
             with open(log_path2, 'w') as f:
                 json.dump(dict(res.headers), f, indent=4, ensure_ascii=False)
+            raise RuntimeError(f"upload error. see {log_path} and {log_path2}")
+        
+        data = decode_res['data']
+        self.library[libkey] = {}
+        self.library[libkey]['id'] = data['id']
+        self.library[libkey]['deletehash'] = data['deletehash']
+        self.library[libkey]['link'] = data['link']
+        self.library[libkey]['datetime'] = data['datetime']
+
+        with open(self.savedata_path, 'w') as f:
+            json.dump({'library': self.library}, f, indent=4, ensure_ascii=False)
+
+        return data['link']
+    
+    def upload_file(self, libkey, src) -> str:
+        with open(src, 'rb') as f:
+            res = requests.post(
+                'https://api.imgur.com/3/upload',
+                data={'image': base64.b64encode(f.read()), 'type': 'base64'},
+                headers={'Authorization': 'Client-ID ' + self.client_id}
+            )
+
+        decode_res = res.json()
+        try:
+            status = decode_res['status']
+            if not status // 100 == 2:
+                raise RuntimeError()
             
         except (KeyError, RuntimeError):
             log_path = 'log/error_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.json'
@@ -354,12 +403,14 @@ class ImgurImageManager():
 
 
 def save_hoyolab_post(post_id: str):
-    with requests.Session() as s:
-        parser = MyHTMLParser(s)
+    with requests.Session() as session:
+        parser = MyHTMLParser(session)
 
-        s.headers = {"User-Agent": ""}  # type: ignore
-        res = s.get("https://bbs-api-os.hoyolab.com/community/post/wapi/getPostFull",
-                    params={"post_id": post_id, "read": "1"})
+        session.headers = {"User-Agent": ""}  # type: ignore
+        res = session.get(
+            "https://bbs-api-os.hoyolab.com/community/post/wapi/getPostFull",
+            params={"post_id": post_id, "read": "1"}
+        )
         data = res.json()["data"]
         try:
             parser.feed(data["post"]["post"]["content"])
@@ -371,7 +422,7 @@ def save_hoyolab_post(post_id: str):
         DST = "posts/" + post_id + "/"
         if not os.path.exists(DST):
             os.mkdir(DST)
-        manager = ImgurImageManager(IMGUR_CID)
+        manager = ImgurImageManager(IMGUR_CID, session=session)
         for filename, link in manager.repost_images(parser.images, with_tqdm=True):
             parser.md_text = parser.md_text.replace(filename, link)
         
